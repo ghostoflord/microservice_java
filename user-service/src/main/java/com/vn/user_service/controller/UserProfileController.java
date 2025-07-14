@@ -1,9 +1,11 @@
-// UserProfileController.java
 package com.vn.user_service.controller;
 
 import com.vn.user_service.domain.UserProfile;
+import com.vn.user_service.domain.response.RestResponse;
 import com.vn.user_service.dto.UserProfileDTO;
 import com.vn.user_service.service.UserProfileService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,27 +21,60 @@ public class UserProfileController {
     }
 
     @GetMapping("/user-profiles")
-    public List<UserProfile> getAll() {
-        return service.findAll();
+    public ResponseEntity<RestResponse<List<UserProfile>>> getAll() {
+        List<UserProfile> userList = service.findAll();
+        RestResponse<List<UserProfile>> response = new RestResponse<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setData(userList);
+        response.setMessage("Lấy danh sách người dùng thành công");
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user-profiles/{id}")
-    public UserProfile getById(@PathVariable Long id) {
-        return service.findById(id).orElseThrow();
+    public ResponseEntity<RestResponse<UserProfile>> getById(@PathVariable Long id) {
+        UserProfile user = service.findById(id).orElseThrow(() -> new RuntimeException("User không tồn tại"));
+
+        RestResponse<UserProfile> response = new RestResponse<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setData(user);
+        response.setMessage("Lấy thông tin người dùng thành công");
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/user-profiles")
-    public UserProfile create(@RequestBody UserProfileDTO dto) {
-        return service.create(dto);
+    public ResponseEntity<RestResponse<UserProfile>> create(@RequestBody UserProfileDTO dto) {
+        UserProfile created = service.create(dto);
+
+        RestResponse<UserProfile> response = new RestResponse<>();
+        response.setStatusCode(HttpStatus.CREATED.value());
+        response.setData(created);
+        response.setMessage("Tạo người dùng thành công");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/user-profiles/{id}")
-    public UserProfile update(@PathVariable Long id, @RequestBody UserProfileDTO dto) {
-        return service.update(id, dto);
+    public ResponseEntity<RestResponse<UserProfile>> update(@PathVariable Long id, @RequestBody UserProfileDTO dto) {
+        UserProfile updated = service.update(id, dto);
+
+        RestResponse<UserProfile> response = new RestResponse<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setData(updated);
+        response.setMessage("Cập nhật người dùng thành công");
+
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/user-profiles/{id}")
-    public void delete(@PathVariable Long id) {
+    public ResponseEntity<RestResponse<Void>> delete(@PathVariable Long id) {
         service.delete(id);
+
+        RestResponse<Void> response = new RestResponse<>();
+        response.setStatusCode(HttpStatus.OK.value());
+        response.setMessage("Xóa người dùng thành công");
+
+        return ResponseEntity.ok(response);
     }
 }
