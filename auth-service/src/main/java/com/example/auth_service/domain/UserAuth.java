@@ -81,4 +81,11 @@ public class UserAuth {
         this.updatedAt = updatedAt;
     }
 
+    public Set<Role> getRoles() {
+    return roles;
+}
+
+public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+}
 }
